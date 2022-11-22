@@ -1,0 +1,108 @@
+version: "3.6"
+services:
+  # webserver:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: webserver
+  #   image: node-a-webserver
+  #   restart: always
+  #   ports: 
+  #     - "81:80"
+  #   networks: 
+  #     - dbnetwork
+  #   volumes:
+  #     - ./nodewebserver:/var/www/node
+  webservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: webservice
+    image: node-a-webservice
+    restart: always
+    ports: 
+      - "1339:1339"
+    networks: 
+      - dbnetwork 
+    volumes:
+      # - type: bind
+        # source: ./nodewebservice
+        # target: /var/www/node    
+      - ./nodewebservice:/var/www/node
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "docker"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "mydb"
+    networks: 
+      - dbnetwork
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"    
+    networks: 
+      - dbnetwork
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=docker
+      - MYSQL_ROOT_HOST=webserver
+      - MYSQL_DATABASE=mydb
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=password
+    networks: 
+      - dbnetwork
+    volumes:
+      - ./mysql:/var/lib/mysql-files
+      - ./config/mysql:/etc/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - target: 80
+        published: 8082
+        protocol: tcp
+        mode: host
+    environment:
+      - PMA_HOST=mysql      
+      - PMA_PORT=3306    
+    networks: 
+      - dbnetwork
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "docker"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+      MONGO_INITDB_DATABASE: "mydb"
+    networks: 
+      - dbnetwork   
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_SERVER: "mongodb"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "docker"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "password"
+      ME_CONFIG_MONGODB_PORT: 27017
+    depends_on:
+      - mongodb
+    networks: 
+      - dbnetwork       
+networks:
+    dbnetwork:
