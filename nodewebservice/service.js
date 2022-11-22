@@ -5,6 +5,8 @@ const { parseComplete } = require("pg-protocol/dist/messages");
 const service = express();
 const port = 1339;
 const name = "Julian";
+const db = require('./pgdbStudent');
+const mikeDB = require('./pgStudentMike');
 
 //setup to read JSON , form data , cors
 service.use(express.json());
@@ -130,24 +132,33 @@ service.get('/student/:id' , async (req , res) => {
 })
 
 //Postgress Stuff
-const Pool = require('pg').Pool
-const pool = new Pool({
-    user: 'docker',
-    host: 'postgres',
-    database : 'mydb',
-    password: 'password',
-    port: 5432 ,
+service.get('/users', db.getUsers);
+service.get('/users/:id' , db.getUserById);
+service.post('/users' , db.createUser);
+service.put('/users/:id' , db.updateUser);
+service.delete('/users/:id' , db.deleteUser);
+
+//Mike Postgress Stuff
+service.get('/mike' , async (req , res) => {
+    if (typeof req.query.name === "string")
+        await mikeDB.SelectByName(req.query.name , res);
+    else
+        await mikeDB.Select(res);
+});
+
+service.post ('/mike' , async (req , res) => {
+    await mikeDB.Insert({
+        Name: req.body.Name,
+        Age: req.body.Age,
+        Course: req.body.Course
+    } , res);
 })
 
-const getUsers = (request, response) => {
-    pool.query('SELECT * FROM "Student" ORDER BY "Id" ASC', (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-      console.log("Database read hit")
-      
-    })
-  }
+service.get ('/mike/:id' , async (req , res) => {
+    await mikeDB.SelectById(parseInt(req.params.id) , res);
+})
 
-  service.get('/users', getUsers)
+//service.get('/mike/:id' , mikeDB.SelectById);
+//service.get('/mike/:name' , mikeDB.SelectByName);
+//service.delete ('/mike/:id' , mikeDB.Delete);
+//service.patch ('/mike/:student' , mikeDB.Patch);
