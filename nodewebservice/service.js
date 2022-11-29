@@ -158,6 +158,10 @@ service.get ('/mike/:id' , async (req , res) => {
     await mikeDB.SelectById(parseInt(req.params.id) , res);
 })
 
+
+service.delete ('/mike/:id' , async (req , res) => {
+    await mikeDB.Delete(parseInt(req.params.id) , res);
+})
 //service.get('/mike/:id' , mikeDB.SelectById);
 //service.get('/mike/:name' , mikeDB.SelectByName);
 //service.delete ('/mike/:id' , mikeDB.Delete);

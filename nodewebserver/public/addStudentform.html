@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Students Database</title>
+    
+</head>
+<body>
+<h1>Students database</h1>
+<h3>Add a new student</h3>
+
+<form action = "addStudent" method = "POST">
+
+    
+    <label for="name_textbox">Name : </label>
+    <input id="name_textbox" name = "name_textbox" type="text" />
+    
+    <br>
+    <label for="age_numberbox" >Age (Yrs) : </label>
+    <input id ="age_numberbox" name ="age_numberbox" type = "number" min="1" max="150" value="20" />
+
+    <br>
+    <label for ="course_textbox" >Course name : </label>
+    <input id ="course_textbox" name ="course_textbox" type ="text" / >
+
+    <br>
+    <input id ="add_button" type="button" value="Add Student" />
+
+    
+    <br>
+</form>
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+            crossorigin="anonymous"></script>
+<script src="js/addStudent.js"></script>
+
+</body>
